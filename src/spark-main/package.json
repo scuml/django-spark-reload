@@ -1,0 +1,30 @@
+{
+  "name": "hotwire_spark",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jorgemanrubia/hotwire_spark.git",
+  "author": "Jorge Manrubia <jorge@37signals.com>, Stephen Mitchell",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c --watch"
+  },
+  "dependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.26.0",
+    "@hotwired/stimulus": "^3.2.2",
+    "@rails/actioncable": "^8.0.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "idiomorph": "^0.7.1",
+    "rollup": "^4.27.4",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "eslint": "^9.21.0",
+    "globals": "^16.0.0"
+  }
+}
