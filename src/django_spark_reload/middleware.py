@@ -79,7 +79,7 @@ class BrowserReloadMiddleware:
         tag = match[0]
         tail = content[match.end() :]
 
-        response.content = head + django_spark_reload_script() + tag + tail
+        response.content = head + django_spark_reload_script(response) + tag + tail
         if "content-length" in response.headers:
             response["content-length"] = len(response.content)
 

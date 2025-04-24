@@ -35,7 +35,7 @@ from django.utils.autoreload import file_changed
 from django.utils.crypto import get_random_string
 
 from django.templatetags.static import static
-
+from .utils import has_file_changed
 # For detecting when Python has reloaded, use a random version ID in memory.
 # When the worker receives a different version from the one it saw previously,
 # it reloads.
@@ -48,7 +48,7 @@ data_queue = queue.Queue()
 reload_timer: threading.Timer | None = None
 
 RELOAD_DEBOUNCE_TIME = 0.05  # seconds
-
+WEBPACK_MODE = getattr(settings, "SPARK_WEBPACK_MODE", False)
 
 def get_and_clear_queue():
     all_data = set()
@@ -113,15 +113,13 @@ def on_autoreload_started(*, sender: BaseReloader, **kwargs: Any) -> None:
         sender.watch_dir(directory, "**/*")
 
     for storage in static_finder_storages():
-        sender.watch_dir(Path(storage.location), "**/*")
+        sender.watch_dir(Path(storage.location), "**/*[!.map]")
 
 
 @receiver(file_changed, dispatch_uid="browser_reload")
 def on_file_changed(*, file_path: Path, **kwargs: Any) -> bool | None:
     # Returning True tells Django *not* to reload
-    print("on file changed", file_path)
     file_parents = file_path.parents
-
     # Django Templates
     for template_dir in django_template_directories():
         if template_dir in file_parents:
@@ -136,19 +134,21 @@ def on_file_changed(*, file_path: Path, **kwargs: Any) -> bool | None:
 
     # Static assets
     for storage in static_finder_storages():
-        if Path(storage.location) in file_parents:
 
+        if Path(storage.location) in file_parents:
             static_file_path = file_path.relative_to(storage.location)
             static_file_path_str = str(static_file_path)
             static_url = static(static_file_path_str)
-            print(static_url)
             if static_file_path_str.endswith(".js") and "_controller" in static_file_path_str:
-                #trigger_reload_soon("reload")
-                trigger_reload_soon("reloadstimulus", path=static_url)
+                if not WEBPACK_MODE or has_file_changed(file_path):
+                    trigger_reload_soon("reloadstimulus", path=static_url)
             elif static_file_path_str.endswith('.css'):
-                trigger_reload_soon("reloadcss", path=static_url)
+                if not WEBPACK_MODE or has_file_changed(file_path):
+                    trigger_reload_soon("reloadcss", path=static_url)
             else:
-                trigger_reload_soon("reload")
+                # Non css or stimulus change
+                if not WEBPACK_MODE or has_file_changed(file_path):
+                    trigger_reload_soon("reload")
 
             return True
 
@@ -164,8 +164,8 @@ def message(type_: str, **kwargs: Any) -> bytes:
     a single event listener.
     """
     jsonified = json.dumps({"type": type_, **kwargs})
-    if type_ != "ping":
-        print(f"data: {jsonified}\n\n")
+    # if type_ != "ping":
+    #     print(f"data: {jsonified}\n\n")
     return f"data: {jsonified}\n\n".encode()
 
 
@@ -209,14 +209,14 @@ def events(request: HttpRequest) -> HttpResponseBase:
                 if should_reload:
                     reload_messages = get_and_clear_queue()
                     should_reload_event.clear()
-                    # if webpack is changing many files at once, trigger a full page reload.
-                    # perhaps later we could do a diff on the files if fast enough
-                    if len(reload_messages) > 2:
-                        print("FULL RELOAD", reload_messages)
-                        yield message("reload")
-                        continue
 
-                    print("RELOAD", reload_messages)
+                    if len(reload_messages) > 3:
+                        # Too many simultanous reloads, likely webpack.
+                        # Full reload to not kill browser.
+                        # Set SPARK_WEBPACK_MODE=True in settings to do file diffs
+                        yield message('reload')
+                        break
+
                     for msg in reload_messages:
                         reload_type, path = msg
                         yield message(msg[0], **({"path": path} if path else {}))

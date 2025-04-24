@@ -26,7 +26,21 @@ export async function reloadHtmlDocument() {
     throw new Error(`${response.status} when fetching ${currentUrl}`)
   }
 
-  const fetchedHTML = await response.text()
+  // MODIFIED FOR DJANGO SPARK
+  // if (!response.ok) {
+  //   throw new Error(`${response.status} when fetching ${currentUrl}`);
+  // }
+  // const fetchedHTML = await response.text()
+  const fetchedHTML = await response.text();
+
+  if (!response.ok) {
+    // replace the doc with the django error page
+    document.open();
+    document.write(fetchedHTML);
+    document.close();
+    throw new Error(`${response.status} when fetching ${currentUrl}`);
+  }
+  // -------
   const parser = new DOMParser()
   return parser.parseFromString(fetchedHTML, "text/html")
 }

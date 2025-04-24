@@ -10,6 +10,7 @@ class DjangoListener {
     const dataset = document.currentScript.dataset
     const workerScriptPath = dataset.workerScriptPath
     const eventsPath = dataset.eventsPath
+    const hardReloadStatusCodes = ['400', '401', '402', '403', '404', '500'];
 
     if (!window.SharedWorker) {
       console.debug('😭 django-hyper-reload cannot work in this browser.')
@@ -17,23 +18,23 @@ class DjangoListener {
       const worker = new SharedWorker(workerScriptPath, {
         name: 'django-hyper-reload'
       })
-      console.info("Listening");
+      //console.info("Listening");
       worker.port.addEventListener('message', (event) => {
         const message = event.data
         const reloadType = message.type;
         const path = message.path;
-        console.info("Reload", reloadType, path);
-        if (reloadType === 'reload') {
-          console.info("Hard Reload");
+        //console.info("Reload", reloadType, path);
+        if (reloadType === 'reload' || hardReloadStatusCodes.includes(previousStatusCode) ) {
+          //console.info("Hard Reload");
           window.location.reload();
         } else if (reloadType === 'softreload') {
-          console.info("Soft Reload");
+          //console.info("Soft Reload");
           this.reloadHtml()
         } else if (reloadType === 'reloadcss') {
-          console.info("ReloadCSS", path);
+          //console.info("ReloadCSS", path);
           this.reloadCss(path)
         } else if (reloadType === 'reloadstimulus') {
-          console.info("ReloadStimulus", path);
+          //console.info("ReloadStimulus", path);
           this.reloadStimulus(path.replace("/static/js/", ""))
           //this.reloadStimulus(path)
         }

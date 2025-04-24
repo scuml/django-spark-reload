@@ -1,21 +1,35 @@
-MIT License
+SOFTWARE LICENSE
 
 Copyright (c) 2025 Stephen Mitchell
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software incorporates code from the following MIT-licensed repositories:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+[Django Browser Reload] (https://github.com/adamchainz/django-browser-reload/)
+
+[Hotwire Spark] (https://github.com/hotwired/spark)
+
+
+Permission is hereby granted, free of charge, to any person or entity with 300 or fewer employees obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+
+Entities with more than 300 employees ("Large Entities") are prohibited from using, copying, modifying, merging, publishing, distributing, sublicensing, or selling copies of the Software without obtaining a separate commercial license from the developer. Large Entities must contact via https://echodot.com/contact/ to negotiate and pay a licensing fee for such use.
+
+
+
+For the purposes of this license, the number of employees is determined by the total number of full-time, part-time, and contract employees employed by the entity and its affiliates at the time of Software use.
+
+
+
+Any use of the Software by a Large Entity without a valid commercial license constitutes a breach of this license and may result in legal action.
+
+
+
+Whistleblower Reward: Any person who reports unlicensed use of the Software by a Large Entity, where such report leads to the successful recovery of licensing fees by the developer, shall be entitled to a reward of 20% of the recovered license fees, subject to verification by the developer. Reports should be submitted to https://echodot.com/contact/. The developer reserves the right to determine the validity of the report and the amount of the reward.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For commercial licensing inquiries or to report unlicensed use, please contact https://echodot.com/contact/.
