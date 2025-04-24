@@ -1320,7 +1320,21 @@ var HotwireSpark = (function () {
     if (!response.ok) {
       throw new Error(`${response.status} when fetching ${currentUrl}`);
     }
+
+    // MODIFIED FOR DJANGO SPARK
+    // if (!response.ok) {
+    //   throw new Error(`${response.status} when fetching ${currentUrl}`);
+    // }
+    // const fetchedHTML = await response.text()
     const fetchedHTML = await response.text();
+    if (!response.ok) {
+      // replace the doc with the django error page
+      document.open();
+      document.write(fetchedHTML);
+      document.close();
+      throw new Error(`${response.status} when fetching ${currentUrl}`);
+    }
+    // -------
     const parser = new DOMParser();
     return parser.parseFromString(fetchedHTML, "text/html");
   }
@@ -1546,29 +1560,31 @@ var HotwireSpark = (function () {
       const dataset = document.currentScript.dataset;
       const workerScriptPath = dataset.workerScriptPath;
       const eventsPath = dataset.eventsPath;
+      const hardReloadStatusCodes = ['400', '401', '402', '403', '404', '500'];
       if (!window.SharedWorker) {
         console.debug('😭 django-spark-reload cannot work in this browser.');
       } else {
         const worker = new SharedWorker(workerScriptPath, {
           name: 'django-spark-reload'
         });
-        console.info("Listening");
+        //console.info("Listening");
         worker.port.addEventListener('message', event => {
           const message = event.data;
           const reloadType = message.type;
           const path = message.path;
-          console.info("Reload", reloadType, path);
-          if (reloadType === 'reload') {
-            console.info("Hard Reload");
+          const previousStatusCode = dataset.statusCode;
+          //console.info("Reload", reloadType, path);
+          if (reloadType === 'reload' || hardReloadStatusCodes.includes(previousStatusCode)) {
+            //console.info("Hard Reload");
             window.location.reload();
           } else if (reloadType === 'softreload') {
-            console.info("Soft Reload");
+            //console.info("Soft Reload");
             this.reloadHtml();
           } else if (reloadType === 'reloadcss') {
-            console.info("ReloadCSS", path);
+            //console.info("ReloadCSS", path);
             this.reloadCss(path);
           } else if (reloadType === 'reloadstimulus') {
-            console.info("ReloadStimulus", path);
+            //console.info("ReloadStimulus", path);
             this.reloadStimulus(path.replace("/static/js/", ""));
             //this.reloadStimulus(path)
           }

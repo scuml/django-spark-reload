@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 
-def django_hyper_reload_script(response) -> str:
+def django_spark_reload_script(response) -> str:
     if not settings.DEBUG:
         return ""
     return format_html(
@@ -18,7 +18,7 @@ def django_hyper_reload_script(response) -> str:
             + " defer></script>"
         ),
         static("hotwire_spark/hotwire_spark.js"),
-        static("django-hyper-reload/reload-worker.js"),
-        reverse("django_hyper_reload:events"),
+        static("django-spark-reload/reload-worker.js"),
+        reverse("django_spark_reload:events"),
         response.status_code,
     )

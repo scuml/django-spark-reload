@@ -13,16 +13,17 @@ class DjangoListener {
     const hardReloadStatusCodes = ['400', '401', '402', '403', '404', '500'];
 
     if (!window.SharedWorker) {
-      console.debug('😭 django-hyper-reload cannot work in this browser.')
+      console.debug('😭 django-spark-reload cannot work in this browser.')
     } else {
       const worker = new SharedWorker(workerScriptPath, {
-        name: 'django-hyper-reload'
+        name: 'django-spark-reload'
       })
       //console.info("Listening");
       worker.port.addEventListener('message', (event) => {
         const message = event.data
         const reloadType = message.type;
         const path = message.path;
+        const previousStatusCode = dataset.statusCode
         //console.info("Reload", reloadType, path);
         if (reloadType === 'reload' || hardReloadStatusCodes.includes(previousStatusCode) ) {
           //console.info("Hard Reload");
