@@ -3,7 +3,7 @@ import commonjs from "@rollup/plugin-commonjs"
 import babel from "@rollup/plugin-babel"
 
 const inputFile = "app/javascript/hotwire/spark/index.js"
-const outputDir = "app/assets/javascripts"
+const outputDir = "../django_spark_reload/static/hotwire_spark"
 
 export default {
   input: inputFile,

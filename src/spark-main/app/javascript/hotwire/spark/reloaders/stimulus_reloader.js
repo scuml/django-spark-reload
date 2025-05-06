@@ -56,7 +56,7 @@ export class StimulusReloader {
   }
 
   #shouldReloadController(path) {
-    console.info("SHOULDY", this.#extractControllerName(path), this.#changedControllerIdentifier, );
+    log("SHOULDY", this.#extractControllerName(path), this.#changedControllerIdentifier, );
     return this.#extractControllerName(path) === this.#changedControllerIdentifier
   }
 
@@ -134,7 +134,7 @@ export class StimulusReloader {
   }
 
   #pathForModuleName(moduleName) {
-    console.info("path for", moduleName, this.#stimulusPathsByModule[moduleName]);
+    log("path for", moduleName, this.#stimulusPathsByModule[moduleName]);
     return this.#stimulusPathsByModule[moduleName]
   }
 

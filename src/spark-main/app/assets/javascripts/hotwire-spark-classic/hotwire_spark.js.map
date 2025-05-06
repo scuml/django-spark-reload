@@ -1,1 +1,0 @@
-{"version":3,"file":"hotwire_spark.js","sources":["../../javascript/hotwire_spark/index.js"],"sourcesContent":["import \"stream_actions/reload_css\"\nimport \"stream_actions/reload_html\"\n\nconsole.debug(\"HOLA!\")\n"],"names":["console","debug"],"mappings":";;;CAGAA,OAAO,CAACC,KAAK,CAAC,OAAO,CAAC;;;;;;"}

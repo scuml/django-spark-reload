@@ -2,6 +2,7 @@ import { MorphHtmlReloader } from "../reloaders/morph_html_reloader.js";
 import { assetNameFromPath } from "../helpers.js";
 import { CssReloader } from "../reloaders/css_reloader.js";
 import { StimulusReloader } from "../reloaders/stimulus_reloader.js";
+import { log } from "../logger.js"
 
 'use strict'
 
@@ -18,26 +19,26 @@ class DjangoListener {
       const worker = new SharedWorker(workerScriptPath, {
         name: 'django-spark-reload'
       })
-      //console.info("Listening");
+      log("DJANGO LISTENER: Listening");
       worker.port.addEventListener('message', (event) => {
         const message = event.data
         const reloadType = message.type;
         const path = message.path;
         const previousStatusCode = dataset.statusCode
-        //console.info("Reload", reloadType, path);
+        log("DJANGO LISTENER: Reload", reloadType, path);
         if (reloadType === 'reload' || hardReloadStatusCodes.includes(previousStatusCode) ) {
-          //console.info("Hard Reload");
+          log("DJANGO LISTENER: Hard Reload");
           window.location.reload();
         } else if (reloadType === 'softreload') {
-          //console.info("Soft Reload");
+          log("DJANGO LISTENER: Soft Reload");
           this.reloadHtml()
         } else if (reloadType === 'reloadcss') {
-          //console.info("ReloadCSS", path);
+          log("DJANGO LISTENER: ReloadCSS", path);
           this.reloadCss(path)
         } else if (reloadType === 'reloadstimulus') {
-          //console.info("ReloadStimulus", path);
-          this.reloadStimulus(path.replace("/static/js/", ""))
-          //this.reloadStimulus(path)
+          log("DJANGO LISTENER: ReloadStimulus", path);
+          //this.reloadStimulus(path.replace("/static/js/", ""))
+          this.reloadStimulus(path)
         }
 
       })

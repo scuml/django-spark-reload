@@ -1387,7 +1387,7 @@ var HotwireSpark = (function () {
       return Object.keys(this.#stimulusPathsByModule).filter(path => path.endsWith("_controller"));
     }
     #shouldReloadController(path) {
-      console.info("SHOULDY", this.#extractControllerName(path), this.#changedControllerIdentifier);
+      log("SHOULDY", this.#extractControllerName(path), this.#changedControllerIdentifier);
       return this.#extractControllerName(path) === this.#changedControllerIdentifier;
     }
     get #changedControllerIdentifier() {
@@ -1450,7 +1450,7 @@ var HotwireSpark = (function () {
       return this.#stimulusControllerPathsToReload.length > 0;
     }
     #pathForModuleName(moduleName) {
-      console.info("path for", moduleName, this.#stimulusPathsByModule[moduleName]);
+      log("path for", moduleName, this.#stimulusPathsByModule[moduleName]);
       return this.#stimulusPathsByModule[moduleName];
     }
     #extractControllerName(path) {
@@ -1567,26 +1567,26 @@ var HotwireSpark = (function () {
         const worker = new SharedWorker(workerScriptPath, {
           name: 'django-spark-reload'
         });
-        //console.info("Listening");
+        log("DJANGO LISTENER: Listening");
         worker.port.addEventListener('message', event => {
           const message = event.data;
           const reloadType = message.type;
           const path = message.path;
           const previousStatusCode = dataset.statusCode;
-          //console.info("Reload", reloadType, path);
+          log("DJANGO LISTENER: Reload", reloadType, path);
           if (reloadType === 'reload' || hardReloadStatusCodes.includes(previousStatusCode)) {
-            //console.info("Hard Reload");
+            log("DJANGO LISTENER: Hard Reload");
             window.location.reload();
           } else if (reloadType === 'softreload') {
-            //console.info("Soft Reload");
+            log("DJANGO LISTENER: Soft Reload");
             this.reloadHtml();
           } else if (reloadType === 'reloadcss') {
-            //console.info("ReloadCSS", path);
+            log("DJANGO LISTENER: ReloadCSS", path);
             this.reloadCss(path);
           } else if (reloadType === 'reloadstimulus') {
-            //console.info("ReloadStimulus", path);
-            this.reloadStimulus(path.replace("/static/js/", ""));
-            //this.reloadStimulus(path)
+            log("DJANGO LISTENER: ReloadStimulus", path);
+            //this.reloadStimulus(path.replace("/static/js/", ""))
+            this.reloadStimulus(path);
           }
         });
         worker.port.postMessage({
