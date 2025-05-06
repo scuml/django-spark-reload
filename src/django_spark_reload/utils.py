@@ -1,12 +1,15 @@
-import hashlib
+from hashlib import md5
+from pathlib import Path
+
 from django.core.cache import cache
 
-def has_file_changed(file_path: str) -> bool:
+def has_file_changed(file_path: Path) -> bool:
     """Return True if the file's MD5 hash has changed since the last check."""
     # Calculate current MD5 hash
-    md5_hash = hashlib.md5()
+    md5_hash = md5()
+
     try:
-        with open(file_path, 'rb') as f:
+        with file_path.open('rb') as f:
             for chunk in iter(lambda: f.read(65536), b''):
                 md5_hash.update(chunk)
         current_md5 = md5_hash.hexdigest()

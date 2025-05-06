@@ -1597,7 +1597,20 @@ var HotwireSpark = (function () {
       }
     }
     reloadHtml() {
-      return MorphHtmlReloader.reload();
+      MorphHtmlReloader.reload().then(() => {
+        if (window.djdt) {
+          // Reshow djdebug toolbar
+          const djDebug = document.getElementById("djDebug");
+          djDebug.classList.remove("djdt-hidden")
+          const show =
+              localStorage.getItem("djdt.show") || djDebug.dataset.defaultShow;
+          if (show === "true") {
+              window.djdt.show_toolbar();
+          } else {
+              window.djdt.hide_toolbar();
+          }
+        }
+      });
     }
     reloadCss(path) {
       const fileName = assetNameFromPath(path);

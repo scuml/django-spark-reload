@@ -118,6 +118,9 @@ def on_autoreload_started(*, sender: BaseReloader, **kwargs: Any) -> None:
 
 @receiver(file_changed, dispatch_uid="browser_reload")
 def on_file_changed(*, file_path: Path, **kwargs: Any) -> bool | None:
+    if file_path.is_dir():
+        return None
+
     # Returning True tells Django *not* to reload
     file_parents = file_path.parents
     # Django Templates
@@ -136,6 +139,7 @@ def on_file_changed(*, file_path: Path, **kwargs: Any) -> bool | None:
     for storage in static_finder_storages():
 
         if Path(storage.location) in file_parents:
+
             static_file_path = file_path.relative_to(storage.location)
             static_file_path_str = str(static_file_path)
             static_url = static(static_file_path_str)
