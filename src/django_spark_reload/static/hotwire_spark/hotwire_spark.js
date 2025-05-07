@@ -1377,17 +1377,44 @@ var HotwireSpark = (function () {
       await Promise.all(this.#stimulusControllerPathsToReload.map(async moduleName => this.#reloadStimulusController(moduleName)));
     }
     get #stimulusControllerPathsToReload() {
-      this.controllerPathsToReload = this.controllerPathsToReload || this.#stimulusControllerPaths.filter(path => this.#shouldReloadController(path));
+      //this.controllerPathsToReload = this.controllerPathsToReload || this.#stimulusControllerPaths.filter(path => this.#shouldReloadController(path))
+      this.controllerPathsToReload = this.controllerPathsToReload || this.#djDetermineStimulusPathsToReload;
       log("Should reload Paths..", this.controllerPathsToReload);
       return this.controllerPathsToReload;
     }
     get #stimulusControllerPaths() {
-      const d = Object.keys(this.#stimulusPathsByModule).filter(path => path.endsWith("_controller"));
-      log("stimulusControllerPaths", d);
       return Object.keys(this.#stimulusPathsByModule).filter(path => path.endsWith("_controller"));
     }
+    get #djDetermineStimulusPathsToReload() {
+      // putting this in one method is easier to understand.  Codin' dirty.
+      const matchingKeys = [];
+
+      // this.changedFilePath;
+      const changedControllerIdentifier = this.#extractControllerName(this.changedFilePath);
+      Object.entries(this.#stimulusPathsByModule).forEach(_ref => {
+        let [key, path] = _ref;
+        if (this.changedFilePath == path) {
+          console.info("key found", key, this.changedFilePath);
+          matchingKeys.push(key);
+          return;
+        }
+        const parts = changedControllerIdentifier.split("--");
+        console.info("parts", parts);
+        // match up parts one by one to see if there's a match, `dir1--dir2--mod` -> `dir2--mod` -> `mod`
+        for (let i = 1; i < parts.length; i++) {
+          console.info("part", parts.slice(i).join("--"), key);
+          if (key === parts.slice(i).join("--") || key + "_controller" === parts.slice(i).join("--")) {
+            console.info("key found", key, this.changedFilePath);
+            matchingKeys.push(key);
+            return;
+          }
+        }
+      });
+      return matchingKeys;
+    }
     #shouldReloadController(path) {
-      log("SHOULDY", this.#extractControllerName(path), this.#changedControllerIdentifier);
+      this.#extractControllerName(path);
+      log("SHOULDY", path, this.#extractControllerName(path), this.#changedControllerIdentifier);
       return this.#extractControllerName(path) === this.#changedControllerIdentifier;
     }
     get #changedControllerIdentifier() {
@@ -1597,20 +1624,7 @@ var HotwireSpark = (function () {
       }
     }
     reloadHtml() {
-      MorphHtmlReloader.reload().then(() => {
-        if (window.djdt) {
-          // Reshow djdebug toolbar
-          const djDebug = document.getElementById("djDebug");
-          djDebug.classList.remove("djdt-hidden")
-          const show =
-              localStorage.getItem("djdt.show") || djDebug.dataset.defaultShow;
-          if (show === "true") {
-              window.djdt.show_toolbar();
-          } else {
-              window.djdt.hide_toolbar();
-          }
-        }
-      });
+      return MorphHtmlReloader.reload();
     }
     reloadCss(path) {
       const fileName = assetNameFromPath(path);
